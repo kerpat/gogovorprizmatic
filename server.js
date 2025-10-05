@@ -7,7 +7,17 @@ const playwright = require('playwright');
 const app = express();
 const port = process.env.PORT || 10000;
 
-app.use(cors());
+// Настройка CORS для всех запросов
+app.use(cors({
+    origin: '*', // Разрешаем все домены
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'apikey'],
+    credentials: true
+}));
+
+// Обработка preflight запросов
+app.options('*', cors());
+
 app.use(express.json({ limit: '10mb' }));
 
 function createSupabaseAdmin() {
@@ -30,7 +40,7 @@ function parseRequestBody(body) {
     return body;
 }
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; // Загружаем токен из переменных окружения
-const BOT_USERNAME = process.env.BOT_USERNAME || 'dasdsaads12321xczbot'; // Имя пользователя бота
+const BOT_USERNAME = process.env.BOT_USERNAME || 'pr1zmaticbot'; // Имя пользователя бота
 const WEBAPP_SHORT_NAME = process.env.WEBAPP_NAME || 'app'; // Короткое имя Web App
 
 /**
@@ -342,7 +352,7 @@ async function handleGetPaymentMethod({ userId }) {
         .single();
 
     if (clientError) throw new Error('Failed to get client data: ' + clientError.message);
-    
+
     const paymentMethodDetails = client?.extra?.payment_method_details;
 
     if (!paymentMethodDetails) {
